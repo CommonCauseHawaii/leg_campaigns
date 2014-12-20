@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Funding a Campaign for Hawaii State Legislature</title>
+
+    <!-- Bootstrap -->
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Custom Styles -->
+    <link href="assets/css/civic.css" rel="stylesheet">
+    
+    <!-- Google Font -->
+    <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Wire+One' rel='stylesheet' type='text/css'>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="assets/js/bootstrap.min.js"></script>
+
+	<script src="d3.v3.min.js" charset="utf-8"></script>
+	<script src="topojson.v1.min.js"></script>
+	<script src="queue.min.js"></script>
+
+	<style>
+		table.small { font-size:9px; font-family:Arial }
+		div.tooltip { display:none; position:absolute; border: 1px solid gray;  }
+		div#display_container { position:relative;}
+		div#summary_svgs {padding-top:100px;}
+		div#summary_svgs svg {border: 1px solid #EEE}
+		
+/*		svg#inset {position:absolute; top: 150px; }*/
+		svg#overview_map {border-top:1px solid #CCC; border-bottom:1px solid #CCC}
+		div#district_map { position:relative; height: 350px; }
+		.modal-content { width: 1000px;}
+		/*.modal-content { width: 1100px; margin-left: -0px; padding: 10px 30px}*/
+		
+		/*div#interactive_container {position:relative;}*/
+		div#readout {
+			position:absolute; 
+			top: -1000px; left: -1000px; width:250px; 
+			/*background-color:white;
+			border:1px solid gray;*/
+			color:white;
+			padding:15px;
+			font-size:10px;	
+		}
+		
+		#readout { position: relative; background: #80bEBa; } 
+		#readout:after { bottom: 100%; left: 50%; border: solid transparent; content: " "; height: 0; width: 0; position: absolute; pointer-events: none; border-color: rgba(128, 190, 186, 0); border-bottom-color: #80bEBa; border-width: 8px; margin-left: -8px; }
+		/*#readout { position: relative; background: #33c2c6; } 
+		#readout:after { bottom: 100%; left: 50%; border: solid transparent; content: " "; height: 0; width: 0; position: absolute; pointer-events: none; border-color: rgba(51, 194, 198, 0); border-bottom-color: #33c2c6; border-width: 8px; margin-left: -8px; }
+		*/
+		#reset_container { position:absolute; top: 320px; left: 480px; display:none;}
+		#reset_button {color: #017d75}
+		div#date { font-size: 12px;}
+               body #S200620081 {
+                width: 90%; /* desired relative width */
+                left: 5%; /* (100%-width)/2 */
+                /* place center */
+                margin-left:auto;
+                margin-right:auto; 
+                }
+		#attribution {margin:20px 0 20px 0;}
+		#instructions {font-size:11px; width:250px; padding:0}
+		#instructions li {margin-bottom:8px; }
+	</style>
+</head>
+<body>
+     <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+              <h1>Funding a Campaign for the Hawaii State Legislature</h1>
+              <h3>Campaign Finance and Fundraiser Filings from 2006 - 2014 (Alpha Release)</h3>
+			  <p id="attribution">Designed and Developed by <a href="http://uhero.hawaii.edu/46/benjamin-trevino">Ben Trevino</a>, David Wang, Viil Lid and Alex Bergo. Please email <a href="mailto:btrevino@hawaii.edu">Ben</a> with comments, questions or feature requests</p>
+			  
+            </div>
+        </div>
+         <!-- Modal -->
+                                    <div class="modal fade" id="S200620081" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                   
+                                                          <div id="districts"></div>
+                                                        <h1 id="record_count"></h1>
+                                                        
+                                                            <div id="header"></div>
+                                                            <div id="race_context"></div>
+
+                                                        
+                                                </div>
+                                                <div class="modal-body">
+                                                    
+                                                            <div id="controls"></div>
+
+															<div id="display_container">
+																<div id="readout">
+			                                             			<div id="date">&nbsp;</div>
+			                                             			<div id="contributions">&nbsp;</div>
+		                                                        </div>
+                                                            	<div id="svgs"></div>
+															</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                 <!-- MODAL OVER-->
+        <div class="row">
+            <div class="col-md-6" id="district_map">
+            </div>
+            <div class="col-md-6">
+	<ul id="instructions"><li>Hover over / click on a precinct to show the House and Senate races for that area.</li><li>Click on a race to view the fundraising details.</li><li> Click "Reset Map" to show all races</li></ul>
+                <!-- <img src="assets/img/map.png" class="img-responsive"> -->
+            </div>
+
+        </div>
+           <div class="row">
+	
+            <div class="col-md-12">
+                 
+	
+	
+                <h3>House</h3>
+				<div id="house_summaries"></div>
+           		<h3>Senate</h3>
+        		<div id="senate_summaries"></div>
+	<div id="summary"></div>
+            </div>
+           </div>
+     </div>
+	<script src="data_reada.js"></script>
+	<script>
+	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+	  ga('create', 'UA-51615134-1', 'uhero.github.io');
+	  ga('send', 'pageview');
+
+	</script>
+</body>
+</html>

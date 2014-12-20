@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Campaign Contribution</title>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script src="http://d3js.org/queue.v1.min.js"></script>
+	<style>
+		table.small { font-size:9px; font-family:Arial }
+		div.tooltip { display:none; position:absolute; border: 1px solid gray;  }
+		div#summary_svgs {padding-top:100px;}
+		div#summary_svgs svg {border: 1px solid #EEE}
+		/*div#interactive_container {position:relative;}*/
+		div#readout {
+			position:absolute; top: -1000px; left: -1000px; width:250px; 
+			background-color:white;
+			border:1px solid gray;
+			padding:5px;
+			font-size:10px;	
+		}
+		div#date { font-size: 12px;}
+	</style>
+</head>
+<body>
+	<div id="districts"></div>
+	<h1 id="record_count"></h1>
+	<div id="controls"></div>
+	<div id="header"></div>
+	<div id="race_context"></div>
+	<div id="interactive_container">
+		<div id="readout">
+			<div id="date">&nbsp;</div>
+			<div id="contributions">&nbsp;</div>
+		</div>
+		<div id="svgs"></div>
+	</div>
+	<div id="summary_svgs"></div>
+	<div id="summary"></div>
+	<script src="data_read.js"></script>
+</body>
+</html>
